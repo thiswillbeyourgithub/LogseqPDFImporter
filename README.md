@@ -10,3 +10,7 @@ Import pdf into logseq but also import annotations made from other softwares
 ## TODO
 * if ink annotation found: take an image
 * infer color via numpy instead of colormath (broken)
+
+
+## credits
+* [pdfannots](https://github.com/0xabu/pdfannots/)
