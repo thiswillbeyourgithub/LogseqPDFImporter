@@ -106,34 +106,68 @@ def annot_to_dict(
             annot["boxes"].append(box)
 
     if annot["boxes"]:
-        bd_x1 = annot["rect"][0]
-        bd_y1 = annot["rect"][1]
-        bd_x2 = annot["rect"][2]
-        bd_y2 = annot["rect"][3]
-        bd_w = bd_x2 - bd_x1
-        bd_h = bd_y2 - bd_y1
+        # bd_x1 = annot["rect"][0]
+        # bd_y1 = annot["rect"][1]
+        # bd_x2 = annot["rect"][2]
+        # bd_y2 = annot["rect"][3]
+        bd_x1 = float(min([b["x0"] for b in annot["boxes"]]))
+        bd_y1 = float(min([b["y0"] for b in annot["boxes"]]))
+        bd_x2 = float(max([b["x1"] for b in annot["boxes"]]))
+        bd_y2 = float(max([b["y1"] for b in annot["boxes"]]))
+        bd_w = (bd_x2 - bd_x1)
+        bd_h = (bd_y2 - bd_y1)
         result['position'] = {
             "bounding": {
-                "x1": bd_x1 - 5,
-                "y1": bd_y1 - 5,
-                "x2": bd_x2 + 5,
-                "y2": bd_y2 + 5,
-                "width": bd_w + 10,
-                "height": bd_h + 10,
+                "x1": bd_x1,
+                "y1": bd_y1,
+                "x2": bd_x2,
+                "y2": bd_y2,
+                "width": bd_w,
+                "height": float(bd_h) * 10 * 6,
             },
             "rects": [
                 {
-                    "x1": b["x0"] - 10,
-                    "y1": b["y0"] - 10,
-                    "x2": b["x1"] + 10,
-                    "y2": b["y1"] + 10,
-                    "width": b["x1"] - b["x0"] + 20,
-                    "height": b["y1"] - b["y0"] + 20,
+                    "x1": float(b["x0"]),
+                    "y1": float(b["y0"]),
+                    "x2": float(b["x1"]),
+                    "y2": float(b["y1"]),
+                    "width": (b["x1"] - b["x0"]),
+                    "height": float(b["y1"] - b["y0"]) * 10 * 6,
                 }
                 for b in annot["boxes"]
             ],
             "page": int(result["page"]),
         }
+        # testing with a different offset derived from the page geometry
+        # px, py = annot["pagesize"][2:]
+        # bd_x1 = px - float(min([b["x0"] for b in annot["boxes"]]))
+        # bd_y1 = py - float(min([b["y0"] for b in annot["boxes"]]))
+        # bd_x2 = px - float(max([b["x1"] for b in annot["boxes"]]))
+        # bd_y2 = py - float(max([b["y1"] for b in annot["boxes"]]))
+        # bd_w = -(bd_x2 - bd_x1)
+        # bd_h = -(bd_y2 - bd_y1)
+        # result['position'] = {
+        #     "bounding": {
+        #         "x1": bd_x1,
+        #         "y1": bd_y1,
+        #         "x2": bd_x2,
+        #         "y2": bd_y2,
+        #         "width": bd_w,
+        #         "height": float(bd_h) * 10 * 6,
+        #     },
+        #     "rects": [
+        #         {
+        #             "x1": px - float(b["x0"]),
+        #             "y1": py - float(b["y0"]),
+        #             "x2": px - float(b["x1"]),
+        #             "y2": py - float(b["y1"]),
+        #             "width": (b["x1"] - b["x0"]),
+        #             "height": float(b["y1"] - b["y0"]) * 10 * 6,
+        #         }
+        #         for b in annot["boxes"]
+        #     ],
+        #     "page": int(result["page"]),
+        # }
 
     if annot["subtype"] in ["/Square", "/Ink"]:
         result["content"] = {
@@ -223,6 +257,8 @@ def main(
                     words = page2.get_text("words")
                     text = _extract_annot(annot2, words)
                     new["contents"] = text
+
+                new["pagesize"] = page2.bound()
 
                 new["page"] = i
 
