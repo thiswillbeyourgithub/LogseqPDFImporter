@@ -53,7 +53,7 @@ def _check_contain(r_word, points):
     return contain
 
 
-def _extract_annot(annot, words_on_page):
+def _extract_annot(annot, words_on_page, keep_newlines):
     """
     source: https://github.com/pymupdf/PyMuPDF/issues/318
     Extract words in a given highlight.
@@ -75,7 +75,10 @@ def _extract_annot(annot, words_on_page):
             _check_contain(fitz.Rect(w[:4]), points)
         ]
         sentences[i] = ' '.join(w[4] for w in words)
-    sentence = ' '.join(sentences)
+    if keep_newlines:
+        sentence = '\n'.join(sentences)
+    else:
+        sentence = ' '.join(sentences)
 
     return sentence
 
@@ -210,6 +213,7 @@ def annot_to_dict(
             colorname = "yellow"
         result["properties"] = {"color": colorname}
 
+
     return result
 
 def getColorName(color):
@@ -248,6 +252,7 @@ def main(
         input_path: str,
         md_path: str = None,
         edn_path: str = None,
+        keep_newlines: bool = True,
         ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
@@ -274,11 +279,11 @@ def main(
                 if new["subtype"] == "/Link":
                     continue
 
+                # extract text using PyMuPDF
                 annot2 = next(annots2)
-                if "contents" not in new:
-                    words = page2.get_text("words")
-                    text = _extract_annot(annot2, words)
-                    new["contents"] = text
+                words = page2.get_text("words")
+                text = _extract_annot(annot2, words, keep_newlines)
+                new["contents"] = text
 
                 new["pagesize"] = page2.bound()
 
