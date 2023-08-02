@@ -8,6 +8,7 @@ Import pdf into logseq but also import annotations made from other softwares
 * `python __init__.py path_to_pdf --md_path path_to_md --edn_path path_to_edn`
 
 ## TODO
+* fix: the location of the highlights in logseq is wrong (meaning they don't appear at the right location in logseq's pdf reader)
 * if ink annotation found: render an image and import it as a regular area highlight
 * infer color via numpy instead of colormath (broken)
 
