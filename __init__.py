@@ -1,3 +1,4 @@
+import hashlib
 import simplejson as json  # only simplejson can dump decimal
 from pathlib import Path
 import sys
@@ -79,12 +80,12 @@ def _extract_annot(annot, words_on_page):
 
 
 def annot_to_dict(
+        file_name,
         annot
         ):
     """Convert an annotation to a dictionary representation suitable for JSON encoding."""
 
     result = {
-        "id #uuid": str(uuid.uuid4()),
         "page": annot["page"] + 1,
     }
 
@@ -175,8 +176,26 @@ def annot_to_dict(
                 "image": "TODO",  # TODO, render an image here and store it
                 # with as name the UNIX timestamp
                 }
+
+        # create a reproducible uuid based on the filename and highlight content
+        result["id #uuid"] = str(
+                uuid.uuid3(
+                    uuid.NAMESPACE_URL,
+                    file_name + result["content"]["text"] + hashlib.md5(
+                        result["content"]["image"]
+                        ).hexdigest(),
+                    )
+                )
     else:
         result['content'] = {"text": str(annot["contents"]).strip()}
+
+        # create a reproducible uuid based on the filename and highlight content
+        result["id #uuid"] = str(
+                uuid.uuid3(
+                    uuid.NAMESPACE_URL,
+                    file_name + result["content"]["text"],
+                    )
+                )
 
     if annot["t"]:
         result["author"] = str(annot["t"]).strip()
@@ -236,6 +255,8 @@ def main(
     reader = PdfReader(input_path)
     reader2 = fitz.open(input_path)  # separate reader that handles annotation text better
 
+    file_name = Path(input_path).name
+
     annots = []
     for i, page in enumerate(reader.pages):
         if "/Annots" in page:
@@ -262,7 +283,7 @@ def main(
 
                 new["page"] = i
 
-                new = annot_to_dict(new)
+                new = annot_to_dict(file_name, new)
                 annots.append(new)
                 print(new)
 
