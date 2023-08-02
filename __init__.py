@@ -75,7 +75,13 @@ def _extract_annot(annot, words_on_page, keep_newlines):
             _check_contain(fitz.Rect(w[:4]), points)
         ]
         sentences[i] = ' '.join(w[4] for w in words)
+
     if keep_newlines:
+        for i, s in enumerate(sentences):
+            if s.startswith("#"):
+                sentences[i] = "\\" + sentences[i]
+            if s.startswith("-"):
+                sentences[i] = "\\" + sentences[i]
         sentence = '\n'.join(sentences)
     else:
         sentence = ' '.join(sentences)
