@@ -318,8 +318,6 @@ def main(
         md += "  ls-type:: annotation\n"
         md += "  hl-page:: " + str(an["page"]) + "\n"
         md += "  hl-color:: " + str(an["properties"]["color"]) + "\n"
-        if "author" in an:
-            md += "  hl-author:: " + an["author"] + "\n"
         md += "  id:: " + an["id #uuid"] + "\n"
 
     edn = json.dumps(annots, indent=2, use_decimal=True)
