@@ -289,6 +289,9 @@ def main(
 
     assert annots, "no annotation found"
 
+    ids = [an["id #uuid"] for an in annots]
+    assert len(ids) == len(set(ids)), "some annotations uuid were not unique!"
+
     annots = {
             "highlights": annots,
             }
