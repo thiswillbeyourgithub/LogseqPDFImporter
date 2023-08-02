@@ -22,7 +22,6 @@ COLORS = {
 }
 
 
-_threshold_intersection = 0.9  # if the intersection is large enough.
 
 
 def _check_contain(r_word, points):
@@ -41,6 +40,8 @@ def _check_contain(r_word, points):
     Returns:
         bool: whether `r_word` is contained in the rectangular area.
     """
+    _threshold_intersection = 0.9  # if the intersection is large enough.
+
     # `r` is mutable, so everytime a new `r` should be initiated.
     r = fitz.Quad(points).rect
     r.intersect(r_word)
