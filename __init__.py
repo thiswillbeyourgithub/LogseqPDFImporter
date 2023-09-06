@@ -340,7 +340,7 @@ def main(
             with open(md_path, "w") as f:
                 f.write(md)
         else:
-            md_path = str(Path(input_path).parent.parent / "pages" / str(Path(input_path).name).replace(".pdf", ".md"))
+            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + str(Path(input_path).name).replace(".pdf", ".md").lower()))
             print(f"Inferred md_path: {md_path}")
             with open(md_path, "w") as f:
                 f.write(md)
