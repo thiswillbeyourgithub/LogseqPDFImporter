@@ -310,7 +310,8 @@ def main(
             }
 
     # create the md file alongside the annotations
-    md = "file-path:: ../assets/" + Path(input_path).name + "\n\n"
+    md = "file-path:: ../assets/" + Path(input_path).name + "\n"
+    md += "diy_type:: [[Annotations_page]]\n\n"
     for an in annots["highlights"]:
         # if not "content" in an:
         #     print(f"No content in annotation: '{an}'")
