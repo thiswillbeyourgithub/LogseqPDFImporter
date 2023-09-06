@@ -1,3 +1,4 @@
+import textwrap
 import hashlib
 import simplejson as json  # only simplejson can dump decimal
 from pathlib import Path
@@ -314,7 +315,10 @@ def main(
         # if not "content" in an:
         #     print(f"No content in annotation: '{an}'")
         #     continue
-        md += "- " + an["content"]["text"] + "\n"
+        lines =  an["content"]["text"].split("\n")
+        md += "- " + lines.pop(0) + "\n"
+        if lines:
+            md += textwrap.indent("\n".join(lines), " " * 2) + "\n"
         md += "  ls-type:: annotation\n"
         md += "  hl-page:: " + str(an["page"]) + "\n"
         md += "  hl-color:: " + str(an["properties"]["color"]) + "\n"
