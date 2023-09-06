@@ -331,11 +331,23 @@ def main(
     print(md)
     print(edn)
     if md_path:
-        with open(md_path, "w") as f:
-            f.write(md)
+        if md_path != "infer":
+            with open(md_path, "w") as f:
+                f.write(md)
+        else:
+            md_path = str(Path(input_path).parent.parent / "pages" / str(Path(input_path).name).replace(".pdf", ".md"))
+            print(f"Inferred md_path: {md_path}")
+            with open(md_path, "w") as f:
+                f.write(md)
     if edn_path:
-        with open(edn_path, "w") as f:
-            f.write(edn)
+        if edn_path != "infer":
+            with open(edn_path, "w") as f:
+                f.write(edn)
+        else:
+            edn_path = str(Path(input_path).absolute()).replace(".pdf", ".edn")
+            print(f"Inferred edn_path: {edn_path}")
+            with open(edn_path, "w") as f:
+                f.write(edn)
 
 
 if __name__ == "__main__":
