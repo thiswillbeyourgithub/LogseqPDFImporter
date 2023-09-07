@@ -193,7 +193,7 @@ def annot_to_dict(
                 uuid.uuid3(
                     uuid.NAMESPACE_URL,
                     file_name + result["content"]["text"] + hashlib.md5(
-                        result["content"]["image"]
+                        result["content"]["image"].encode()
                         ).hexdigest(),
                     )
                 )
