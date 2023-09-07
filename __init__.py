@@ -1,4 +1,5 @@
 import time
+import shutil
 import textwrap
 import hashlib
 import simplejson as json  # only simplejson can dump decimal
@@ -95,7 +96,9 @@ def _extract_annot(annot, words_on_page, keep_newlines):
 
 def annot_to_dict(
         file_name,
-        annot
+        annot,  # a dict
+        annot_pdfreader,
+        annot_fitz,
         ):
     """Convert an annotation to a dictionary representation suitable for JSON encoding."""
 
@@ -185,21 +188,15 @@ def annot_to_dict(
         # }
 
     if annot["subtype"] in ["/Square", "/Ink"]:
+        # render image
+        image_uuid = str(uuid.uuid4())
+        image_id = str(result["page"]) + "_" + image_uuid + "_" + str(int(time.time() * 1000))
+        annot_fitz.get_pixmap().save("./images_cache/" + image_id + ".png")
         result["content"] = {
                 "text": "[:span]",
-                "image": "TODO" + str(time.time()),  # TODO, render an image here and store it
-                # with as name the UNIX timestamp
+                "image_id": image_id,
                 }
-
-        # create a reproducible uuid based on the filename and highlight content
-        result["id #uuid"] = str(
-                uuid.uuid3(
-                    uuid.NAMESPACE_URL,
-                    file_name + result["content"]["text"] + hashlib.md5(
-                        result["content"]["image"].encode()
-                        ).hexdigest(),
-                    )
-                )
+        result["id #uuid"] = image_uuid
     else:
         result['content'] = {"text": str(annot["contents"]).strip()}
 
@@ -273,6 +270,8 @@ def main(
 
     file_name = Path(input_path).name
 
+    Path("images_cache").mkdir(exist_ok=True)
+
     annots = []
     for i, page in enumerate(reader.pages):
         if "/Annots" in page:
@@ -299,7 +298,7 @@ def main(
 
                 new["page"] = i
 
-                new = annot_to_dict(file_name, new)
+                new = annot_to_dict(file_name, new, annot, annot2)
                 annots.append(new)
                 print(new)
 
@@ -311,6 +310,11 @@ def main(
     annots = {
             "highlights": annots,
             }
+
+    if imgdir_path == "infer":
+        imgdir_path = (Path(input_path).parent / Path(input_path).stem)
+        imgdir_path.mkdir(exist_ok=True)
+        imgdir_path = str(imgdir_path)
 
     # create the md file alongside the annotations
     md = "file-path:: ../assets/" + Path(input_path).name + "\n"
@@ -325,8 +329,17 @@ def main(
         md += "  hl-page:: " + str(an["page"]) + "\n"
         md += "  hl-color:: " + str(an["properties"]["color"]) + "\n"
         md += "  id:: " + an["id #uuid"] + "\n"
+        if "image_id" in an["content"] and imgdir_path:
+            md += "  hl-type:: area\n"
+            md += "  hl-stamp:: " + str(int(time.time() * 1000)) + "\n"
+            # TODO: get the tiemstamp of the creation of the annot
+            shutil.move(
+                    "images_cache/" + an["content"]["image_id"] + ".png",
+                    imgdir_path + "/" + an["content"]["image_id"] + ".png"
+                    )
         if lines:
             md += textwrap.indent("\n".join(lines), " " * 2) + "\n"
+
 
     edn = json.dumps(annots, indent=2, use_decimal=True)
 
@@ -338,6 +351,7 @@ def main(
 
     print(md)
     print(edn)
+
     if md_path:
         if md_path != "infer":
             with open(md_path, "w") as f:
@@ -347,6 +361,7 @@ def main(
             print(f"Inferred md_path: {md_path}")
             with open(md_path, "w") as f:
                 f.write(md)
+
     if edn_path:
         if edn_path != "infer":
             with open(edn_path, "w") as f:
