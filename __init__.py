@@ -321,12 +321,12 @@ def main(
         #     continue
         lines =  an["content"]["text"].split("\n")
         md += "- " + lines.pop(0) + "\n"
-        if lines:
-            md += textwrap.indent("\n".join(lines), " " * 2) + "\n"
         md += "  ls-type:: annotation\n"
         md += "  hl-page:: " + str(an["page"]) + "\n"
         md += "  hl-color:: " + str(an["properties"]["color"]) + "\n"
         md += "  id:: " + an["id #uuid"] + "\n"
+        if lines:
+            md += textwrap.indent("\n".join(lines), " " * 2) + "\n"
 
     edn = json.dumps(annots, indent=2, use_decimal=True)
 
