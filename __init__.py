@@ -67,6 +67,8 @@ def _extract_annot(annot, words_on_page, keep_newlines):
         str: words in the entire highlight.
     """
     quad_points = annot.vertices
+    if not quad_points:  # square annotation apparently don't have vertices
+        quad_points = annot.rect.quad
     quad_count = int(len(quad_points) / 4)
     sentences = ['' for i in range(quad_count)]
     for i in range(quad_count):
