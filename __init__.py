@@ -257,8 +257,9 @@ def edn_var_formatter(text, var):
 
 def main(
         input_path: str,
-        md_path: str = None,
-        edn_path: str = None,
+        md_path: str = "infer",
+        edn_path: str = "infer",
+        imgdir_path: str = "infer",
         keep_newlines: bool = True,
         ):
     """
