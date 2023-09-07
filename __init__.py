@@ -1,3 +1,4 @@
+import time
 import textwrap
 import hashlib
 import simplejson as json  # only simplejson can dump decimal
@@ -186,7 +187,7 @@ def annot_to_dict(
     if annot["subtype"] in ["/Square", "/Ink"]:
         result["content"] = {
                 "text": "[:span]",
-                "image": "TODO",  # TODO, render an image here and store it
+                "image": "TODO" + str(time.time()),  # TODO, render an image here and store it
                 # with as name the UNIX timestamp
                 }
 
