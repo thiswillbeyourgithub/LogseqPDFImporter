@@ -268,6 +268,22 @@ def main(
         ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
+    Parameters
+    ----------
+    input_path: str
+        path to the pdf
+    md_path: str, 'infer'
+        path to the .md annotations. If 'infer' will automatically try
+        to find it based on input_path
+    edn_path: str, 'infer'
+        path to the .edn annotations. If 'infer' will automatically try
+        to find it based on input_path
+    imgdir_path: str, 'infer'
+        path to the directory to store the area image. If 'infer' will
+        automatically try to find it based on input_path
+    text_boundary_threshold: float, default 0.9
+        Higher number means tighter boxing boundaries for the text.
+        Lower number to allow catching text outside of the highlight boundary.
     """
 
     reader = PdfReader(input_path)
