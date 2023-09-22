@@ -268,6 +268,7 @@ def main(
         ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
+
     Parameters
     ----------
     input_path: str
