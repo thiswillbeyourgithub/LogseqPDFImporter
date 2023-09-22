@@ -293,7 +293,11 @@ def main(
                     continue
 
                 # extract text using PyMuPDF
-                annot2 = next(annots2)
+                try:
+                    annot2 = next(annots2)
+                except StopIteration as err:
+                    print(f"Iteration of annotation via fitz failed: '{err}'")
+                    continue
                 words = page2.get_text("words")
                 text = _extract_annot(annot2, words, keep_newlines)
                 new["contents"] = text
