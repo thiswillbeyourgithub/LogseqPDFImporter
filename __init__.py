@@ -25,9 +25,7 @@ COLORS = {
 }
 
 
-
-
-def _check_contain(r_word, points):
+def _check_contain(r_word, points, thresh):
     """
     source: https://github.com/pymupdf/PyMuPDF/issues/318
     If `r_word` is contained in the rectangular area.
@@ -39,24 +37,26 @@ def _check_contain(r_word, points):
         r_word (fitz.Rect): rectangular area of a single word.
         points (list): list of points in the rectangular area of the
             given part of a highlight.
+        thresh: a higher number means tighter boxing boundaries for
+            the text. Lower number to allow catching text outside of the
+            highlight boundary.
 
     Returns:
         bool: whether `r_word` is contained in the rectangular area.
     """
-    _threshold_intersection = 0.9  # if the intersection is large enough.
 
     # `r` is mutable, so everytime a new `r` should be initiated.
     r = fitz.Quad(points).rect
     r.intersect(r_word)
 
-    if r.get_area() >= r_word.get_area() * _threshold_intersection:
+    if r.get_area() >= r_word.get_area() * thresh:
         contain = True
     else:
         contain = False
     return contain
 
 
-def _extract_annot(annot, words_on_page, keep_newlines):
+def _extract_annot(annot, words_on_page, keep_newlines, thresh):
     """
     source: https://github.com/pymupdf/PyMuPDF/issues/318
     Extract words in a given highlight.
@@ -77,7 +77,7 @@ def _extract_annot(annot, words_on_page, keep_newlines):
         points = quad_points[i * 4: i * 4 + 4]
         words = [
             w for w in words_on_page if
-            _check_contain(fitz.Rect(w[:4]), points)
+            _check_contain(fitz.Rect(w[:4]), points, thresh)
         ]
         sentences[i] = ' '.join(w[4] for w in words)
 
@@ -264,6 +264,7 @@ def main(
         edn_path: str = "infer",
         imgdir_path: str = "infer",
         keep_newlines: bool = True,
+        text_boundary_threshold=0.9,
         ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
@@ -299,7 +300,11 @@ def main(
                     print(f"Iteration of annotation via fitz failed: '{err}'")
                     continue
                 words = page2.get_text("words")
-                text = _extract_annot(annot2, words, keep_newlines)
+                text = _extract_annot(
+                        annot2,
+                        words,
+                        keep_newlines,
+                        text_boundary_threshold)
                 new["contents"] = text
 
                 new["pagesize"] = page2.bound()
