@@ -104,6 +104,7 @@ def annot_to_dict(
 
     result = {
         "page": annot["page"] + 1,
+        "properties": {},
     }
 
 
@@ -208,17 +209,17 @@ def annot_to_dict(
                     )
                 )
 
-    if annot["t"]:
+    if "t" in annot and annot["t"]:
         result["author"] = str(annot["t"]).strip()
 
-    # add color
-    if annot["c"]:
-        try:
+    # add color if present
+    try:
+        if annot["c"]:
             colorname = getColorName(annot["c"])
-        except Exception as err:
-            print(f"Error when parsing color: '{err}'. Using yellow")
-            colorname = "yellow"
-        result["properties"] = {"color": colorname}
+    except Exception as err:
+        print(f"Error when parsing color: '{err}'. Using yellow")
+        colorname = "yellow"
+    result["properties"]["color"] = colorname
 
 
     return result
