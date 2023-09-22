@@ -287,7 +287,7 @@ def main(
     """
 
     reader = PdfReader(input_path)
-    reader2 = fitz.open(input_path)  # separate reader that handles annotation text better
+    readerfitz = fitz.open(input_path)  # separate reader that handles annotation text better
 
     file_name = Path(input_path).name
 
@@ -296,8 +296,8 @@ def main(
     annots = []
     for i, page in enumerate(reader.pages):
         if "/Annots" in page:
-            page2 = reader2[i]
-            annots2 = page2.annots()
+            pagefitz = readerfitz[i]
+            annotsfitz = pagefitz.annots()
 
             for ii, annot in enumerate(page["/Annots"]):
                 obj = annot.get_object()
@@ -311,23 +311,23 @@ def main(
 
                 # extract text using PyMuPDF
                 try:
-                    annot2 = next(annots2)
+                    annotfitz = next(annotsfitz)
                 except StopIteration as err:
                     print(f"Iteration of annotation via fitz failed: '{err}'")
                     continue
-                words = page2.get_text("words")
+                words = pagefitz.get_text("words")
                 text = _extract_annot(
-                        annot2,
+                        annotfitz,
                         words,
                         keep_newlines,
                         text_boundary_threshold)
                 new["contents"] = text
 
-                new["pagesize"] = page2.bound()
+                new["pagesize"] = pagefitz.bound()
 
                 new["page"] = i
 
-                new = annot_to_dict(file_name, new, annot, annot2)
+                new = annot_to_dict(file_name, new, annot, annotfitz)
                 annots.append(new)
                 print(new)
 
