@@ -211,6 +211,8 @@ def annot_to_dict(
 
     if "t" in annot and annot["t"]:
         result["author"] = str(annot["t"]).strip()
+    else:
+        result["author"] = "Unknown"
 
     # add color if present
     try:
