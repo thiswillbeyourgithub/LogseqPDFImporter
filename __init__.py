@@ -108,7 +108,7 @@ def annot_to_dict(
 
 
     # get the shape
-    bd_x1 = annot["rect"][0]
+    bd_x1 = annot["quadpoints"][0]["x0"] if annot["quadpoints"] else annot["rect"][0]
     bd_y1 = annot["rect"][1]
     bd_x2 = annot["rect"][2]
     bd_y2 = annot["rect"][3]
