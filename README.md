@@ -2,7 +2,7 @@
 Import pdf into logseq but also import annotations made from other softwares
 
 ## Status
-* work in progress. The highlights don't appear at the right location on logseq but the pdf coordinates are very confusing (help welcome). But at least you can see them in the annotation panel and clicking on them leads you to the right page.
+* work in progress. The highlights don't appear at the right location on logseq but the pdf coordinates are very confusing (help welcome). But at least you can see them in the annotation panel and clicking on them leads you to the right page. If you use an "ink" annotation, this script will automatically create an annotation in logseq linked to an image that includes the whole ink.
 
 ## Usage
 * `python -m pip install -r requirements.txt`
