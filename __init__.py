@@ -126,20 +126,22 @@ def annot_to_dict(
             annot["boxes"].append(box)
 
     if annot["boxes"]:
+        # try using rect
         bd_x1 = annot["rect"][0]
         bd_y1 = annot["rect"][1]
         bd_x2 = annot["rect"][2]
         bd_y2 = annot["rect"][3]
-
-        # page geometry
-        px, py = annot["pagesize"][2:]
-
-        bd_x1 = float(min([b["x0"] for b in annot["boxes"]]))
-        bd_y1 = float(min([b["y0"] for b in annot["boxes"]]))
-        bd_x2 = float(max([b["x1"] for b in annot["boxes"]]))
-        bd_y2 = float(max([b["y1"] for b in annot["boxes"]]))
         bd_w = (bd_x2 - bd_x1)
         bd_h = (bd_y2 - bd_y1)
+
+        # try using boxes
+        # bd_x1 = float(min([b["x0"] for b in annot["boxes"]]))
+        # bd_y1 = float(min([b["y0"] for b in annot["boxes"]]))
+        # bd_x2 = float(max([b["x1"] for b in annot["boxes"]]))
+        # bd_y2 = float(max([b["y1"] for b in annot["boxes"]]))
+        # bd_w = (bd_x2 - bd_x1)
+        # bd_h = (bd_y2 - bd_y1)
+        # breakpoint()
         result['position'] = {
             "bounding": {
                 "x1": bd_x1,
@@ -164,6 +166,7 @@ def annot_to_dict(
         }
 
         # # testing with a different offset derived from the page geometry
+        # px, py = annot["pagesize"][2:]
         # bd_w = (bd_x2 - bd_x1)
         # bd_h = (bd_y2 - bd_y1)
         # result['position'] = {
