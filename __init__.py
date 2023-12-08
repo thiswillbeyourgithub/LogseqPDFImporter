@@ -99,6 +99,7 @@ def annot_to_dict(
         annot,  # a dict
         annot_pdfreader,
         annot_fitz,
+        pagefitz,
         ):
     """Convert an annotation to a dictionary representation suitable for JSON encoding."""
 
@@ -192,7 +193,8 @@ def annot_to_dict(
         # render image
         image_uuid = str(uuid.uuid4())
         image_id = str(result["page"]) + "_" + image_uuid + "_" + str(int(time.time() * 1000))
-        annot_fitz.get_pixmap().save("./images_cache/" + image_id + ".png")
+        annot_irect = annot_fitz.get_pixmap().irect
+        pagefitz.get_pixmap(clip=annot_irect, alpha=True, annots=True).save("./images_cache/" + image_id + ".png")
         result["content"] = {
                 "text": "[:span]",
                 "image_id": image_id,
@@ -328,7 +330,7 @@ def main(
 
                 new["page"] = i
 
-                new = annot_to_dict(file_name, new, annot, annotfitz)
+                new = annot_to_dict(file_name, new, annot, annotfitz, pagefitz)
                 annots.append(new)
                 print(new)
 
