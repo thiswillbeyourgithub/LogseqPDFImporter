@@ -361,7 +361,8 @@ def main(
         md += "  id:: " + an["id #uuid"] + "\n"
         if "image_id" in an["content"] and imgdir_path:
             md += "  hl-type:: area\n"
-            md += "  hl-stamp:: " + str(int(time.time() * 1000)) + "\n"
+            tstamp = an["content"]["image_id"].split("_")[-1][:-4]
+            md += "  hl-stamp:: " + tstamp + "\n"
             # TODO: get the tiemstamp of the creation of the annot
             shutil.move(
                     "images_cache/" + an["content"]["image_id"] + ".png",
