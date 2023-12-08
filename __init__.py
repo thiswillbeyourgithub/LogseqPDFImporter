@@ -321,6 +321,11 @@ def main(
                     text_boundary_threshold)
             annotdict["contents"] = text
             annotdict["colors"] = annot.colors['stroke']
+            annotdict["rect"] = annot.rect
+            annotdict["quadpoints"] = []
+            for point in annot.rect.quad:
+                annotdict["quadpoints"].append(point[0])
+                annotdict["quadpoints"].append(point[1])
 
             annotdict["pagesize"] = page.bound()
 
