@@ -10,6 +10,7 @@ Import pdf into logseq but also import annotations made from other softwares
 
 ## TODO
 * fix: the location of the highlights in logseq is wrong (meaning they don't appear at the right location in logseq's pdf reader)
+    * edit: this might have been fixed in logseq 0.10.0, I haven't checked yet
 * if ink annotation found: render an image and import it as a regular area highlight
 * infer color via numpy instead of colormath (broken)
 
