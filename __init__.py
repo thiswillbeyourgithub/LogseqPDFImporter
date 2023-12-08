@@ -106,88 +106,80 @@ def annot_to_dict(
         "properties": {},
     }
 
-    annot["boxes"] = []
-    if "quadpoints" in annot and annot["quadpoints"] is not None:
-        assert len(annot["quadpoints"]) % 8 == 0
-        while annot["quadpoints"] != []:
-            (x0, y0, x1, y1, x2, y2, x3, y3) = annot["quadpoints"][:8]
-            annot["quadpoints"] = annot["quadpoints"][8:]
-            xvals = [x0, x1, x2, x3]
-            yvals = [y0, y1, y2, y3]
-            box = {
-                    "x0": min(xvals),
-                    "y0": min(yvals),
-                    "x1": max(xvals),
-                    "y1": max(yvals)
-                    }
-            annot["boxes"].append(box)
 
-    if annot["boxes"]:
-        # try using rect
-        bd_x1 = annot["rect"][0]
-        bd_y1 = annot["rect"][1]
-        bd_x2 = annot["rect"][2]
-        bd_y2 = annot["rect"][3]
-        bd_w = (bd_x2 - bd_x1)
-        bd_h = (bd_y2 - bd_y1)
+    # get the shape
+    bd_x1 = annot["rect"][0]
+    bd_y1 = annot["rect"][1]
+    bd_x2 = annot["rect"][2]
+    bd_y2 = annot["rect"][3]
+    bd_w = (bd_x2 - bd_x1)
+    bd_h = (bd_y2 - bd_y1)
 
-        # try using boxes
-        # bd_x1 = float(min([b["x0"] for b in annot["boxes"]]))
-        # bd_y1 = float(min([b["y0"] for b in annot["boxes"]]))
-        # bd_x2 = float(max([b["x1"] for b in annot["boxes"]]))
-        # bd_y2 = float(max([b["y1"] for b in annot["boxes"]]))
-        # bd_w = (bd_x2 - bd_x1)
-        # bd_h = (bd_y2 - bd_y1)
-        # breakpoint()
-        result['position'] = {
-            "bounding": {
-                "x1": bd_x1,
-                "y1": bd_y1,
-                "x2": bd_x2,
-                "y2": bd_y2,
-                "width": bd_w,
-                "height": float(bd_h) * 10 * 6,
-            },
-            "rects": [
-                {
-                    "x1": float(b["x0"]),
-                    "y1": float(b["y0"]),
-                    "x2": float(b["x1"]),
-                    "y2": float(b["y1"]),
-                    "width": (b["x1"] - b["x0"]),
-                    "height": float(b["y1"] - b["y0"]) * 10 * 6,
-                }
-                for b in annot["boxes"]
-            ],
-            "page": int(result["page"]),
-        }
+    result['position'] = {
+        "bounding": {
+            "x1": bd_x1,
+            "y1": bd_y1,
+            "x2": bd_x2,
+            "y2": bd_y2,
+            "width": bd_w * 2,
+            "height": float(bd_h) * 70,
+        },
+        "rects": [],
+        "page": int(result["page"]),
+    }
 
-        # # testing with a different offset derived from the page geometry
-        # px, py = annot["pagesize"][2:]
-        # bd_w = (bd_x2 - bd_x1)
-        # bd_h = (bd_y2 - bd_y1)
-        # result['position'] = {
-        #     "bounding": {
-        #         "x1": bd_x1,
-        #         "y1": bd_y1,
-        #         "x2": bd_x2,
-        #         "y2": bd_y2,
-        #         "width": bd_w,
-        #         "height": float(bd_h),
-        #     },
-        #     "rects": [
-        #         {
-        #             "x1": float(b["x0"]),
-        #             "y1": py - float(b["y0"]),
-        #             "x2": float(b["x1"]),
-        #             "y2": py - float(b["y1"]),
-        #             "width": (b["x1"] - b["x0"]),
-        #             "height": float(b["y1"] - b["y0"]) * 10 * 6,
-        #         }
-        #         for b in annot["boxes"]
-        #     ],
-        #     "page": int(result["page"]),
-        # }
+#    annot["boxes"] = []
+#    if "quadpoints" in annot and len(annot["quadpoints"]) >= 8:
+#        while len(annot["quadpoints"]) >= 8:
+#            (x0, y0, x1, y1, x2, y2, x3, y3) = annot["quadpoints"][:8]
+#            annot["quadpoints"] = annot["quadpoints"][8:]
+#            xvals = [x0, x1, x2, x3]
+#            yvals = [y0, y1, y2, y3]
+#            box = {
+#                    "x0": min(xvals),
+#                    "y0": min(yvals),
+#                    "x1": max(xvals),
+#                    "y1": max(yvals)
+#                    }
+#            annot["boxes"].append(box)
+    for b in annot["quadpoints"]:
+        result["position"]["rects"].append(
+            {
+                "x1": float(b["x0"]),
+                "y1": float(b["y0"]),
+                "x2": float(b["x1"]),
+                "y2": float(b["y1"]),
+                "width": (b["x1"] - b["x0"]) * 2,
+                "height": float(bd_h) * 70,
+            }
+            )
+
+    # # testing with a different offset derived from the page geometry
+    # px, py = annot["pagesize"][2:]
+    # bd_w = (bd_x2 - bd_x1)
+    # bd_h = (bd_y2 - bd_y1)
+    # result['position'] = {
+    #     "bounding": {
+    #         "x1": bd_x1,
+    #         "y1": bd_y1,
+    #         "x2": bd_x2,
+    #         "y2": bd_y2,
+    #         "width": bd_w,
+    #         "height": float(bd_h),
+    #     },
+    #     "rects": [
+    #         {
+    #             "x1": float(b["x0"]),
+    #             "y1": py - float(b["y0"]),
+    #             "x2": float(b["x1"]),
+    #             "y2": py - float(b["y1"]),
+    #             "width": (b["x1"] - b["x0"]),
+    #             "height": float(b["y1"] - b["y0"]) * 10 * 6,
+    #         }
+    #         for b in annot["boxes"]
+    #     ],
+    #     "page": int(result["page"]),
+    # }
 
     if annot["subtype"].lower() in ["square", "ink"]:
         # render image
@@ -318,9 +310,20 @@ def main(
             annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect
             annotdict["quadpoints"] = []
-            for point in annot.rect.quad:
-                annotdict["quadpoints"].append(point[0])
-                annotdict["quadpoints"].append(point[1])
+            vertices = annot.vertices
+            if vertices and len(vertices) % 2 == 0:
+                if all(len(ver) == 2 for ver in vertices):
+                    for iii in range(len(vertices)//2):
+                        ver = vertices[iii*2:(iii+1)*2]
+                        annotdict["quadpoints"].append(
+                                {
+                                    "x0": ver[0][0],
+                                    "y0": ver[0][1],
+
+                                    "x1": ver[1][0],
+                                    "y1": ver[1][1],
+                                    }
+                                )
 
             annotdict["pagesize"] = page.bound()
 
