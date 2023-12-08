@@ -212,8 +212,11 @@ def annot_to_dict(
                     )
                 )
 
-    if "t" in annot and annot["t"]:
-        result["author"] = str(annot["t"]).strip()
+    # add author (usually stored in 'title')
+    if "author" not in annot and "title" in annot:
+        annot["author"] = annot["title"]
+    if "author" in annot and annot["author"]:
+        result["author"] = str(annot["author"]).strip()
     else:
         result["author"] = "Unknown"
 
