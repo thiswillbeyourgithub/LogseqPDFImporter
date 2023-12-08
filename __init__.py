@@ -106,7 +106,6 @@ def annot_to_dict(
         "properties": {},
     }
 
-
     annot["boxes"] = []
     if "quadpoints" in annot and annot["quadpoints"] is not None:
         assert len(annot["quadpoints"]) % 8 == 0
