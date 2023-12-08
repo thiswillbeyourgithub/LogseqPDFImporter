@@ -376,7 +376,7 @@ def main(
     for var in ["x1", "y1", "x2", "y2", "width", "height", "id #uuid",
                 "page", "position", "content", "text", "properties",
                 "color", "rects", "bounding", "highlights", "image",
-                "author"]:
+                "author", "image_id"]:
         edn = edn_var_formatter(edn, var)
 
     print(md)
