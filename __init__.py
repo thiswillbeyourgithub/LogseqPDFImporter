@@ -7,7 +7,6 @@ from pathlib import Path
 import sys
 import uuid
 import fire
-from PyPDF2 import PdfReader
 
 import fitz
 
@@ -97,7 +96,6 @@ def _extract_annot(annot, words_on_page, keep_newlines, thresh):
 def annot_to_dict(
         file_name,
         annot,  # a dict
-        annot_pdfreader,
         annot_fitz,
         pagefitz,
         ):
@@ -192,7 +190,7 @@ def annot_to_dict(
         #     "page": int(result["page"]),
         # }
 
-    if annot["subtype"] in ["/Square", "/Ink"]:
+    if annot["subtype"].lower() in ["square", "ink"]:
         # render image
         image_uuid = str(uuid.uuid4())
         image_id = str(result["page"]) + "_" + image_uuid + "_" + str(int(time.time() * 1000))
@@ -221,8 +219,8 @@ def annot_to_dict(
 
     # add color if present
     try:
-        if annot["c"]:
-            colorname = getColorName(annot["c"])
+        if annot["colors"]:
+            colorname = getColorName(annot["colors"])
     except Exception as err:
         print(f"Error when parsing color: '{err}'. Using yellow")
         colorname = "yellow"
@@ -292,7 +290,6 @@ def main(
         Lower number to allow catching text outside of the highlight boundary.
     """
 
-    reader = PdfReader(input_path)
     readerfitz = fitz.open(input_path)  # separate reader that handles annotation text better
 
     file_name = Path(input_path).name
@@ -300,42 +297,35 @@ def main(
     Path("images_cache").mkdir(exist_ok=True)
 
     annots = []
-    for i, page in enumerate(reader.pages):
-        if "/Annots" in page:
-            pagefitz = readerfitz[i]
-            annotsfitz = pagefitz.annots()
+    for i, page in enumerate(readerfitz):
+        for ii, annot in enumerate(page.annots()):
+            annotdict = {
+                    k.replace("/", "").lower(): v
+                    for k, v in annot.info.items()
+                    }
+            assert len(annot.type) == 2
+            annotdict["subtype"] = annot.type[-1].lower().replace("/", "")
 
-            for ii, annot in enumerate(page["/Annots"]):
-                obj = annot.get_object()
-                new = {
-                        k.replace("/", "").lower(): v
-                        for k, v in obj.items()
-                        }
+            if annotdict["subtype"] == "link":
+                continue
 
-                if new["subtype"] == "/Link":
-                    continue
+            # extract text using PyMuPDF
+            words = page.get_text("words")
+            text = _extract_annot(
+                    annot,
+                    words,
+                    keep_newlines,
+                    text_boundary_threshold)
+            annotdict["contents"] = text
+            annotdict["colors"] = annot.colors['stroke']
 
-                # extract text using PyMuPDF
-                try:
-                    annotfitz = next(annotsfitz)
-                except StopIteration as err:
-                    print(f"Iteration of annotation via fitz failed: '{err}'")
-                    continue
-                words = pagefitz.get_text("words")
-                text = _extract_annot(
-                        annotfitz,
-                        words,
-                        keep_newlines,
-                        text_boundary_threshold)
-                new["contents"] = text
+            annotdict["pagesize"] = page.bound()
 
-                new["pagesize"] = pagefitz.bound()
+            annotdict["page"] = i
 
-                new["page"] = i
-
-                new = annot_to_dict(file_name, new, annot, annotfitz, pagefitz)
-                annots.append(new)
-                print(new)
+            annotdict = annot_to_dict(file_name, annotdict, annot, page)
+            annots.append(annotdict)
+            print(annotdict)
 
     assert annots, "no annotation found"
 
