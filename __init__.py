@@ -396,7 +396,7 @@ def main(
             with open(edn_path, "w") as f:
                 f.write(edn)
         else:
-            edn_path = str(Path(input_path).absolute()).replace(".pdf", ".edn")
+            edn_path = str(Path(input_path).parent / Path(input_path).name.lower().replace(".pdf", ".edn"))
             print(f"Inferred edn_path: {edn_path}")
             with open(edn_path, "w") as f:
                 f.write(edn)
