@@ -342,7 +342,7 @@ def main(
             }
 
     if imgdir_path == "infer":
-        imgdir_path = (Path(input_path).parent / Path(input_path).stem)
+        imgdir_path = (Path(input_path).parent / Path(input_path).stem.lower())
         imgdir_path.mkdir(exist_ok=True)
         imgdir_path = str(imgdir_path)
 
