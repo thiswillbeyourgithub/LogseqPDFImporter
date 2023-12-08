@@ -19,7 +19,7 @@ COLORS = {
         'yellow': sRGBColor(1.0, 0.78431372549, 0.196078431373),
         'red': sRGBColor(1.0, 0.0, 0.0),
         'green': sRGBColor(0.78431372549, 1, 0.392156862745),
-        'blue': sRGBColor(0.294117647059, 0.588235294118, 1.0),
+        'blue': sRGBColor(0.294117647059, 0.688235294118, 1.0),
         'purple': sRGBColor(0.78431372549, 0.392156862745, 0.78431372549),
 }
 
@@ -221,8 +221,8 @@ def annot_to_dict(
 
     # add color if present
     try:
-        if annot["colors"]:
-            colorname = getColorName(annot["colors"])
+        if annot["color"]:
+            colorname = getColorName(annot["color"])
     except Exception as err:
         print(f"Error when parsing color: '{err}'. Using yellow")
         colorname = "yellow"
@@ -236,11 +236,7 @@ def getColorName(color):
     Determine neartest color based on Delta-E difference between input and reference colors.
     Create sRGBColor object from input
     """
-    try:
-        annotationcolor = sRGBColor(color[0], color[1], color[2])
-    except TypeError:
-        # In case something goes wrong, return green
-        return 'green'
+    annotationcolor = sRGBColor(color[0], color[1], color[2])
 
     deltae = {}
 
@@ -319,7 +315,7 @@ def main(
                     keep_newlines,
                     text_boundary_threshold)
             annotdict["contents"] = text
-            annotdict["colors"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
+            annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect
             annotdict["quadpoints"] = []
             for point in annot.rect.quad:
