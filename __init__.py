@@ -114,21 +114,21 @@ def annot_to_dict(
     bd_y2 = annot["rect"][3]
     bd_w = (bd_x2 - bd_x1)
     bd_h = (bd_y2 - bd_y1)
+#
+#    result['position'] = {
+#        "bounding": {
+#            "x1": bd_x1,
+#            "y1": bd_y1,
+#            "x2": bd_x2,
+#            "y2": bd_y2,
+#            "width": bd_w * 2,
+#            "height": float(bd_h) * 70,
+#        },
+#        "rects": [],
+#        "page": int(result["page"]),
+#    }
 
-    result['position'] = {
-        "bounding": {
-            "x1": bd_x1,
-            "y1": bd_y1,
-            "x2": bd_x2,
-            "y2": bd_y2,
-            "width": bd_w * 2,
-            "height": float(bd_h) * 70,
-        },
-        "rects": [],
-        "page": int(result["page"]),
-    }
-
-#    annot["boxes"] = []
+    annot["boxes"] = []
 #    if "quadpoints" in annot and len(annot["quadpoints"]) >= 8:
 #        while len(annot["quadpoints"]) >= 8:
 #            (x0, y0, x1, y1, x2, y2, x3, y3) = annot["quadpoints"][:8]
@@ -142,44 +142,44 @@ def annot_to_dict(
 #                    "y1": max(yvals)
 #                    }
 #            annot["boxes"].append(box)
-    for b in annot["quadpoints"]:
-        result["position"]["rects"].append(
-            {
-                "x1": float(b["x0"]),
-                "y1": float(b["y0"]),
-                "x2": float(b["x1"]),
-                "y2": float(b["y1"]),
-                "width": (b["x1"] - b["x0"]) * 2,
-                "height": float(bd_h) * 70,
-            }
-            )
+#    for b in annot["quadpoints"]:
+#        result["position"]["rects"].append(
+#            {
+#                "x1": float(b["x0"]),
+#                "y1": float(b["y0"]),
+#                "x2": float(b["x1"]),
+#                "y2": float(b["y1"]),
+#                "width": (b["x1"] - b["x0"]) * 2,
+#                "height": float(bd_h) * 70,
+#            }
+#            )
 
     # # testing with a different offset derived from the page geometry
-    # px, py = annot["pagesize"][2:]
-    # bd_w = (bd_x2 - bd_x1)
-    # bd_h = (bd_y2 - bd_y1)
-    # result['position'] = {
-    #     "bounding": {
-    #         "x1": bd_x1,
-    #         "y1": bd_y1,
-    #         "x2": bd_x2,
-    #         "y2": bd_y2,
-    #         "width": bd_w,
-    #         "height": float(bd_h),
-    #     },
-    #     "rects": [
-    #         {
-    #             "x1": float(b["x0"]),
-    #             "y1": py - float(b["y0"]),
-    #             "x2": float(b["x1"]),
-    #             "y2": py - float(b["y1"]),
-    #             "width": (b["x1"] - b["x0"]),
-    #             "height": float(b["y1"] - b["y0"]) * 10 * 6,
-    #         }
-    #         for b in annot["boxes"]
-    #     ],
-    #     "page": int(result["page"]),
-    # }
+    px, py = annot["pagesize"][2:]
+    bd_w = (bd_x2 - bd_x1)
+    bd_h = (bd_y2 - bd_y1)
+    result['position'] = {
+        "bounding": {
+            "x1": bd_x1,
+            "y1": bd_y1,
+            "x2": bd_x2,
+            "y2": bd_y2,
+            "width": bd_w,
+            "height": float(bd_h),
+        },
+        "rects": [
+            {
+                "x1": float(b["x0"]) / px,
+                "y1": float(b["y0"]) / py,
+                "x2": float(b["x1"]) / px,
+                "y2": float(b["y1"]) / py,
+                "width": (float(b["x1"]) - float(b["x0"])) / px,
+                "height": (float(b["y1"]) - float(b["y0"])) / py,
+            }
+            for b in annot["boxes"]
+        ],
+        "page": int(result["page"]),
+    }
 
     if annot["subtype"].lower() in ["square", "ink"]:
         # render image
