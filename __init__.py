@@ -106,77 +106,48 @@ def annot_to_dict(
         "properties": {},
     }
 
+    # geometry page
+    # more info: https://stackoverflow.com/questions/6230752/extracting-page-sizes-from-pdf-in-python/58288544#58288544
+    px, py = annot["pagesize"].width, annot["pagesize"].height
+    # px, py = annot["mediaboxsize"].width, annot["mediaboxsize"].height
+    # px, py = annot["cropboxsize"].width, annot["cropboxsize"].height
 
-    # get the shape
-    bd_x1 = annot["quadpoints"][0]["x0"] if annot["quadpoints"] else annot["rect"][0]
-    bd_y1 = annot["rect"][1]
-    bd_x2 = annot["rect"][2]
-    bd_y2 = annot["rect"][3]
-    bd_w = (bd_x2 - bd_x1)
-    bd_h = (bd_y2 - bd_y1)
-#
-#    result['position'] = {
-#        "bounding": {
-#            "x1": bd_x1,
-#            "y1": bd_y1,
-#            "x2": bd_x2,
-#            "y2": bd_y2,
-#            "width": bd_w * 2,
-#            "height": float(bd_h) * 70,
-#        },
-#        "rects": [],
-#        "page": int(result["page"]),
-#    }
+    # turn the quadpoints into a list of rectangles. To make the
+    # highlighted area in several parts
+    # annot["boxes"] = []
+    # if "quadpoints" in annot and len(annot["quadpoints"]) >= 8:
+    #     while len(annot["quadpoints"]) >= 8:
+    #         (x0, y0, x1, y1, x2, y2, x3, y3) = annot["quadpoints"][:8]
+    #         annot["quadpoints"] = annot["quadpoints"][8:]
+    #         xvals = [x0, x1, x2, x3]
+    #         yvals = [y0, y1, y2, y3]
+    #         box = {
+    #                 "x0": min(xvals),
+    #                 "y0": min(yvals),
+    #                 "x1": max(xvals),
+    #                 "y1": max(yvals)
+    #                 }
+    #         annot["boxes"].append(box)
 
-    annot["boxes"] = []
-#    if "quadpoints" in annot and len(annot["quadpoints"]) >= 8:
-#        while len(annot["quadpoints"]) >= 8:
-#            (x0, y0, x1, y1, x2, y2, x3, y3) = annot["quadpoints"][:8]
-#            annot["quadpoints"] = annot["quadpoints"][8:]
-#            xvals = [x0, x1, x2, x3]
-#            yvals = [y0, y1, y2, y3]
-#            box = {
-#                    "x0": min(xvals),
-#                    "y0": min(yvals),
-#                    "x1": max(xvals),
-#                    "y1": max(yvals)
-#                    }
-#            annot["boxes"].append(box)
-#    for b in annot["quadpoints"]:
-#        result["position"]["rects"].append(
-#            {
-#                "x1": float(b["x0"]),
-#                "y1": float(b["y0"]),
-#                "x2": float(b["x1"]),
-#                "y2": float(b["y1"]),
-#                "width": (b["x1"] - b["x0"]) * 2,
-#                "height": float(bd_h) * 70,
-#            }
-#            )
-
-    # # testing with a different offset derived from the page geometry
-    px, py = annot["pagesize"][2:]
-    bd_w = (bd_x2 - bd_x1)
-    bd_h = (bd_y2 - bd_y1)
+    # annotation shape
     result['position'] = {
         "bounding": {
-            "x1": bd_x1,
-            "y1": bd_y1,
-            "x2": bd_x2,
-            "y2": bd_y2,
-            "width": bd_w,
-            "height": float(bd_h),
+            "x1": annot["rect"].x0,
+            "y1": annot["rect"].y0,
+            "x2": annot["rect"].x1,
+            "y2": annot["rect"].y1,
+            "width": px - annot["rect"].x0,
+            "height": py - annot["rect"].y0,
         },
         "rects": [
             {
-                "x1": float(b["x0"]) / px,
-                "y1": float(b["y0"]) / py,
-                "x2": float(b["x1"]) / px,
-                "y2": float(b["y1"]) / py,
-                "width": (float(b["x1"]) - float(b["x0"])) / px,
-                "height": (float(b["y1"]) - float(b["y0"])) / py,
-            }
-            for b in annot["boxes"]
+                "x1": annot["rect"].x0,
+                "y1": annot["rect"].y0,
+                "x2": annot["rect"].x1,
+                "y2": annot["rect"].y1,
+                "width": px - annot["rect"].x0,
+                "height": py - annot["rect"].y0,
+            }  # for b in annot["boxes"]
         ],
         "page": int(result["page"]),
     }
