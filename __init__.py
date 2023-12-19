@@ -325,7 +325,9 @@ def main(
                                     }
                                 )
 
-            annotdict["pagesize"] = page.bound()
+            annotdict["pagesize"] = page.rect
+            annotdict["mediaboxsize"] = page.mediabox
+            annotdict["cropboxsize"] = page.cropbox
 
             annotdict["page"] = i
 
