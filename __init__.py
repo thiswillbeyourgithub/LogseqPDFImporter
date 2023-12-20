@@ -7,20 +7,17 @@ from pathlib import Path
 import sys
 import uuid
 import fire
+import colour
 
 import fitz
 
-from colormath.color_objects import sRGBColor, LabColor
-from colormath.color_conversions import convert_color
-from colormath.color_diff import delta_e_cie2000
-
 
 COLORS = {
-        'yellow': sRGBColor(1.0, 0.78431372549, 0.196078431373),
-        'red': sRGBColor(1.0, 0.0, 0.0),
-        'green': sRGBColor(0.78431372549, 1, 0.392156862745),
-        'blue': sRGBColor(0.294117647059, 0.688235294118, 1.0),
-        'purple': sRGBColor(0.78431372549, 0.392156862745, 0.78431372549),
+        'yellow': (1.0, 0.78431372549, 0.196078431373),
+        'red': (1.0, 0.0, 0.0),
+        'green': (0.78431372549, 1, 0.392156862745),
+        'blue': (0.294117647059, 0.688235294118, 1.0),
+        'purple': (0.78431372549, 0.392156862745, 0.78431372549),
 }
 
 
@@ -196,17 +193,13 @@ def annot_to_dict(
 
 def getColorName(color):
     """
-    Determine neartest color based on Delta-E difference between input and reference colors.
-    Create sRGBColor object from input
+    Determine nearest color based on Delta-E difference between input and reference colors.
     """
-    annotationcolor = sRGBColor(color[0], color[1], color[2])
-
+    color = colour.sRGB_to_XYZ(color)
     deltae = {}
 
-    # Iterate over reference colors and calculate Delta-E for each one.
-    # deltae will contain a dictionary in the form of 'colorname': <float> deltae.
     for colorname, referencecolor in COLORS.items():
-        deltae[colorname] = delta_e_cie2000(convert_color(referencecolor, LabColor), convert_color(annotationcolor, LabColor))
+        deltae[colorname] = colour.delta_E(color, referencecolor)
 
     # return first key from dictionary sorted asc by value
     likelycolor = sorted(deltae, key=deltae.get)[0]
