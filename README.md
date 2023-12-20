@@ -10,7 +10,7 @@ Import pdf into logseq but also import annotations made from other softwares
 
 ## TODO
 * make the annotation using rectangles instead of one large overlapping area
-* infer color via numpy instead of colormath (broken)
+
 
 
 ## credits
