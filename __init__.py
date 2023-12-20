@@ -316,7 +316,7 @@ def main(
             }
 
     if imgdir_path == "infer":
-        imgdir_path = (Path(input_path).parent / Path(input_path).stem.lower())
+        imgdir_path = (Path(input_path).parent / Path(input_path).stem)
         imgdir_path.mkdir(exist_ok=True)
         imgdir_path = str(imgdir_path)
 
@@ -362,7 +362,7 @@ def main(
             with open(md_path, "w") as f:
                 f.write(md)
         else:
-            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + str(Path(input_path).name).replace(".pdf", ".md").lower()))
+            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + str(Path(input_path).name).replace(".pdf", ".md")))
             print(f"Inferred md_path: {md_path}")
             with open(md_path, "w") as f:
                 f.write(md)
