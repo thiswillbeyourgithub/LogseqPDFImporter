@@ -14,4 +14,5 @@ Import pdf into logseq but also import annotations made from other softwares
 
 
 ## credits
+* [user e-zz who was indispensable in getting the annotation locations right](https://github.com/e-zz/logseq-pdf-extract/discussions/3#discussioncomment-7902471)
 * [pdfannots](https://github.com/0xabu/pdfannots/)
