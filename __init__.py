@@ -136,8 +136,8 @@ def annot_to_dict(
             "y1": annot["rect"].y0,
             "x2": annot["rect"].x1,
             "y2": annot["rect"].y1,
-            "width": px - annot["rect"].x0,
-            "height": py - annot["rect"].y0,
+            "width": px,
+            "height": py,
         },
         "rects": [
             {
@@ -145,8 +145,8 @@ def annot_to_dict(
                 "y1": annot["rect"].y0,
                 "x2": annot["rect"].x1,
                 "y2": annot["rect"].y1,
-                "width": px - annot["rect"].x0,
-                "height": py - annot["rect"].y0,
+                "width": px,
+                "height": py,
             }  # for b in annot["boxes"]
         ],
         "page": int(result["page"]),
