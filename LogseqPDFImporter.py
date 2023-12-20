@@ -338,6 +338,7 @@ def main(
         if lines:
             md += textwrap.indent("\n".join(lines), " " * 2) + "\n"
 
+    shutil.rmtree("images_cache")
 
     edn = json.dumps(annots, indent=2, use_decimal=True)
 
