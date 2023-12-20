@@ -2,7 +2,10 @@
 Import pdf into logseq but also import annotations made from other softwares
 
 ## Status
-* work in progress. The text highlights work. Other type of annotation (lines, shapes, rectangles, etc) are parsed as area highlight. If you have any issue just tell me.
+* *work in progress*
+* The text highlights are correctly parsed.
+* Other type of annotation (lines, shapes, rectangles, etc) are parsed as "area highlight" (open an issue if something goes wrong)
+* Colors are correctly matched to logseq's available colors.
 
 ## Usage
 * `python -m pip install -r requirements.txt`
