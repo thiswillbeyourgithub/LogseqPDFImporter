@@ -11,6 +11,15 @@ Import pdf into logseq but also import annotations made from other softwares
 * `python -m pip install -r requirements.txt`
 * `python __init__.py path_to_pdf --md_path path_to_md --edn_path path_to_edn`
 
+## Example
+### PDF
+![](./docs/normal 1.png)
+![](./docs/normal 2.png)
+
+### Logseq Output
+![](./docs/logseq 1.png)
+![](./docs/logseq 2.png)
+
 ## TODO
 * make the annotation using rectangles instead of one large overlapping area
 
