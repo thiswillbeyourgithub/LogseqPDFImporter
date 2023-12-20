@@ -13,12 +13,12 @@ Import pdf into logseq but also import annotations made from other softwares
 
 ## Example
 ### PDF
-[](docs/normal 1.png)
-[](docs/normal 2.png)
+![](docs/normal 1.png)
+![](docs/normal 2.png)
 
 ### Logseq Output
-[](docs/logseq 1.png)
-[](docs/logseq 2.png)
+![](docs/logseq 1.png)
+![](docs/logseq 2.png)
 
 ## TODO
 * make the annotation using rectangles instead of one large overlapping area
