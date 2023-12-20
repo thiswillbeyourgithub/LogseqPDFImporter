@@ -12,13 +12,11 @@ Import pdf into logseq but also import annotations made from other softwares
 * `python __init__.py path_to_pdf --md_path path_to_md --edn_path path_to_edn`
 
 ## Example
-### PDF
-<img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/normal_1.png" height=128/>
-<img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/normal_2.png" height=128/>
+### 1
+<img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/normal_1.png" height=128/> <img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/logseq_1.png" height=128/>
 
-### Logseq Output
-<img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/logseq_1.png" height=128/>
-<img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/logseq_2.png" height=128/>
+### 2
+<img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/normal_2.png" height=128/> <img src="https://github.com/thiswillbeyourgithub/pdfannotations_to_logseq/blob/main/docs/logseq_2.png" height=128/>
 
 ## TODO
 * make the annotation using rectangles instead of one large overlapping area
