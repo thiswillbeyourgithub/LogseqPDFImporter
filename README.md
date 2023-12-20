@@ -1,4 +1,4 @@
-# pdfannotations_to_logseq
+# LogseqPDFImporter
 Import pdf into logseq but also import annotations made from other softwares
 
 ## Status
@@ -9,7 +9,7 @@ Import pdf into logseq but also import annotations made from other softwares
 
 ## Usage
 * `python -m pip install -r requirements.txt`
-* `python __init__.py path_to_pdf --md_path path_to_md --edn_path path_to_edn`
+* `python LogseqPDFImporter.py path_to_pdf --md_path path_to_md --edn_path path_to_edn`
 
 ## Example
 ### 1
