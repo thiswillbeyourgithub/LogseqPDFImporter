@@ -4,7 +4,7 @@ Import pdf into logseq but also import annotations made from other softwares
 ## Status
 * *work in progress*
 * The text highlights are correctly parsed.
-* Other type of annotation (lines, shapes, rectangles, etc) are parsed as "area highlight" (open an issue if something goes wrong)
+* Other type of annotation (lines, shapes, rectangles, etc) are parsed as "area highlight" (open an issue if something goes wrong). The area is currently only one rectangle that surrounds the whole area, I have yet to code the exact rectangle geometry extractions (help welcome!)
 * Colors are correctly matched to logseq's available colors.
 * Creates both the .md and .edn files, as well as images of area highlights.
 
