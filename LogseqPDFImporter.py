@@ -156,7 +156,7 @@ def annot_to_dict(
         image_uuid = str(
                 uuid.uuid3(
                     uuid.NAMESPACE_URL,
-                    file_name + str(result["page"]) + str(annot_irect.x0) + str(annot_irect.x1) + str(annot_irect.y0) + str(annot_irect.y1)
+                    file_name + str(result["page"]) + str(tuple(annot_irect)[0]) + str(tuple(annot_irect)[1]) + str(tuple(annot_irect)[2]) + str(tuple(annot_irect)[3])
                     )
                 )
         image_id = str(result["page"]) + "_" + image_uuid
