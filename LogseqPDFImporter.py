@@ -308,7 +308,14 @@ def main(
     assert annots, "no annotation found"
 
     ids = [an["id #uuid"] for an in annots]
-    assert len(ids) == len(set(ids)), "some annotations uuid were not unique!"
+    if len(ids) != len(set(ids)):
+        for an in annots:
+            one_id = an["id #uuid"]
+            if ids.count(one_id) > 1:
+                print(f"Non unique id for this annotation: {an}")
+        raise Exception("Some annotations uuid were not unique! "
+                        "The uuid is derived from the text content or "
+                        "the image location.")
 
     annots = {
             "highlights": annots,
