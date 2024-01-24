@@ -151,9 +151,15 @@ def annot_to_dict(
 
     if annot["subtype"].lower() in ["square", "ink"]:
         # render image
-        image_uuid = str(uuid.uuid4())
-        image_id = str(result["page"]) + "_" + image_uuid + "_" + str(int(time.time() * 1000))
         annot_irect = annot_fitz.get_pixmap().irect
+        # create an image uuid that is deterministic
+        image_uuid = str(
+                uuid.uuid3(
+                    uuid.NAMESPACE_URL,
+                    file_name + str(result["page"]) + str(annot_irect.x0) + str(annot_irect.x1) + str(annot_irect.y0) + str(annot_irect.y1)
+                    )
+                )
+        image_id = str(result["page"]) + "_" + image_uuid
         pagefitz.get_pixmap(clip=annot_irect, alpha=True, annots=True).save("./images_cache/" + image_id + ".png")
         result["content"] = {
                 "text": "[:span]",
