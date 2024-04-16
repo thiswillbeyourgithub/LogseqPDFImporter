@@ -186,14 +186,13 @@ def annot_to_dict(
         result["author"] = "Unknown"
 
     # add color if present
+    colorname = "yellow"
     try:
         if annot["color"]:
             colorname = getColorName(annot["color"])
     except Exception as err:
-        print(f"Error when parsing color: '{err}'. Using yellow")
-        colorname = "yellow"
+        print(f"Error when parsing color: '{err}'. Using {colorname}")
     result["properties"]["color"] = colorname
-
 
     return result
 
