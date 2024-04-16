@@ -20,7 +20,7 @@ Import pdf into logseq but also import annotations made from other softwares
 <img src="https://github.com/thiswillbeyourgithub/LogseqPDFImporter/blob/main/docs/normal_2.png" width=300/> <img src="https://github.com/thiswillbeyourgithub/LogseqPDFImporter/blob/main/docs/logseq_2.png" width=300/>
 
 ## TODO
-* make the annotation using rectangles instead of one large overlapping area
+* fix the text annotation by using small rectangles that cover exactly the text instead of one large overlapping area over the whole text
 
 
 
