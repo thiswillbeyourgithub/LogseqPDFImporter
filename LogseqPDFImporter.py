@@ -377,11 +377,14 @@ def main(
     # create the md file alongside the annotations
     md = "file-path:: ../assets/" + Path(input_path).name + "\n"
     md += "diy_type:: [[Annotations_page]]\n\n"
-    for an in annots["highlights"]:
+    for ia, an in enumerate(annots["highlights"]):
         # if not "content" in an:
         #     print(f"No content in annotation: '{an}'")
         #     continue
-        lines =  an["content"]["text"].split("\n")
+        text =  an["content"]["text"]
+        if not text.strip():
+            text = f"Notext {ia + 1}"
+        lines =  text.split("\n")
         md += "- " + lines.pop(0) + "\n"
         md += "  ls-type:: annotation\n"
         md += "  hl-page:: " + str(an["page"]) + "\n"
