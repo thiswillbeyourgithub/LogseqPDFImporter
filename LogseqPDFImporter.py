@@ -173,7 +173,7 @@ def annot_to_dict(
         result["id #uuid"] = str(
                 uuid.uuid3(
                     uuid.NAMESPACE_URL,
-                    file_name + result["content"]["text"],
+                    file_name + result["content"]["text"] + json.dumps(result["position"]),
                     )
                 )
 
