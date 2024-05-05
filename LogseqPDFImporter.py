@@ -320,8 +320,9 @@ def main(
         nonunique_ids = [one_id for one_id in ids if ids.count(one_id) > 1]
         assert nonunique_ids
         print("Non unique id for the following annotations:")
-        for one_id in nonunique_ids:
-            print(f"DUP: {one_id}")
+        for an in annots:
+            if an["id #uuid"] in nonunique_ids:
+                print(f"DUP: {an}")
 
         # sanity check: duplicate UUID are indeed identical
         for nid in nonunique_ids:
@@ -334,7 +335,7 @@ def main(
                     if an != first_an and json.dumps(an) != json.dumps(first_an):
                         print(
                             "Annotations with the same UUID are actually "
-                            f"different: \n {an}\n{first_an}"
+                            f"different: \n{an}\n{first_an}"
                             "\nPlease open an issue on github"
                             )
 
