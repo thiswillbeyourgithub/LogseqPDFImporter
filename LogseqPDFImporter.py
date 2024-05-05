@@ -342,7 +342,7 @@ def main(
             md += "  hl-type:: area\n"
             tstamp = an["content"]["image_id"].split("_")[-1]
             md += "  hl-stamp:: " + tstamp + "\n"
-            # TODO: get the tiemstamp of the creation of the annot
+            # TODO: get the timestamp of the creation of the annot
             shutil.move(
                     "images_cache/" + an["content"]["image_id"] + ".png",
                     imgdir_path + "/" + an["content"]["image_id"] + ".png"
