@@ -194,6 +194,9 @@ def annot_to_dict(
         print(f"Error when parsing color: '{err}'. Using {colorname}")
     result["properties"]["color"] = colorname
 
+    if not result['content']["text"].strip():
+        print(f"Warning: annotation with empty text:\n{result}")
+
     return result
 
 def getColorName(color):
