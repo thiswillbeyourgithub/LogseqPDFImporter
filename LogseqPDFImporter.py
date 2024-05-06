@@ -374,6 +374,8 @@ def main(
         imgdir_path.mkdir(exist_ok=True)
         imgdir_path = str(imgdir_path)
 
+    filename = str(Path(input_path).name)
+
     # create the md file alongside the annotations
     md = "file-path:: ../assets/" + Path(input_path).name + "\n"
     md += "diy_type:: [[Annotations_page]]\n\n"
@@ -383,7 +385,8 @@ def main(
         #     continue
         text =  an["content"]["text"]
         if not text.strip():
-            text = f"Notext {ia + 1}"
+            # text = f"Notext {ia + 1}"
+            text = f"{filename} (empty annotation {ia + 1})"
         lines =  text.split("\n")
         md += "- " + lines.pop(0) + "\n"
         md += "  ls-type:: annotation\n"
@@ -420,7 +423,7 @@ def main(
             with open(md_path, "w") as f:
                 f.write(md)
         else:
-            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + str(Path(input_path).name).replace(".pdf", ".md")))
+            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + filename).replace(".pdf", ".md")))
             print(f"Inferred md_path: {md_path}")
             with open(md_path, "w") as f:
                 f.write(md)
@@ -430,7 +433,7 @@ def main(
             with open(edn_path, "w") as f:
                 f.write(edn)
         else:
-            edn_path = str(Path(input_path).parent / Path(input_path).name.replace(".pdf", ".edn"))
+            edn_path = str(Path(input_path).parent / filename.replace(".pdf", ".edn"))
             print(f"Inferred edn_path: {edn_path}")
             with open(edn_path, "w") as f:
                 f.write(edn)
