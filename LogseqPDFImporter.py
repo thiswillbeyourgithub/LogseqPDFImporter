@@ -173,7 +173,7 @@ def annot_to_dict(
         result["id #uuid"] = str(
                 uuid.uuid3(
                     uuid.NAMESPACE_URL,
-                    file_name + result["content"]["text"],
+                    file_name + result["content"]["text"] + json.dumps(result["position"]),
                     )
                 )
 
@@ -193,6 +193,9 @@ def annot_to_dict(
     except Exception as err:
         print(f"Error when parsing color: '{err}'. Using {colorname}")
     result["properties"]["color"] = colorname
+
+    if not result['content']["text"].strip():
+        print(f"Warning: annotation with empty text:\n{result}")
 
     return result
 
@@ -221,13 +224,14 @@ def edn_var_formatter(text, var):
 
 
 def main(
-        input_path: str,
-        md_path: str = "infer",
-        edn_path: str = "infer",
-        imgdir_path: str = "infer",
-        keep_newlines: bool = True,
-        text_boundary_threshold=0.9,
-        ):
+    input_path: str,
+    md_path: str = "infer",
+    edn_path: str = "infer",
+    imgdir_path: str = "infer",
+    keep_newlines: bool = True,
+    text_boundary_threshold: float = 0.9,
+    nonunique_uuid_do: str = "exit",
+    ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
 
@@ -247,7 +251,15 @@ def main(
     text_boundary_threshold: float, default 0.9
         Higher number means tighter boxing boundaries for the text.
         Lower number to allow catching text outside of the highlight boundary.
+    nonunique_uuid_do: str, default 'exit'
+        Set to 'remove' to automatically remove annotations that have a non unique
+        UUID.
+        Set to 'keep' to not even check for duplicate UUID and export them as usual.
+        Leave to 'exit' to crash if there are non unique UUIDs.
+        Note: The UUID for each block is a hash derived from its content so
+        there really should be no reason to have duplicate UUIDs AFAIK.
     """
+    assert nonunique_uuid_do in ["exit", "remove", "keep"], f"nonunique_uuid_do value is {nonunique_uuid_do}"
 
     readerfitz = fitz.open(input_path)  # separate reader that handles annotation text better
 
@@ -308,13 +320,50 @@ def main(
 
     ids = [an["id #uuid"] for an in annots]
     if len(ids) != len(set(ids)):
+        nonunique_ids = [one_id for one_id in ids if ids.count(one_id) > 1]
+        assert nonunique_ids
+        print("Non unique id for the following annotations:")
         for an in annots:
-            one_id = an["id #uuid"]
-            if ids.count(one_id) > 1:
-                print(f"Non unique id for this annotation: {an}")
-        raise Exception("Some annotations uuid were not unique! "
-                        "The uuid is derived from the text content or "
-                        "the image location.")
+            if an["id #uuid"] in nonunique_ids:
+                print(f"DUP: {an}")
+
+        # sanity check: duplicate UUID are indeed identical
+        for nid in nonunique_ids:
+            for an in annots:
+                if an["id #uuid"] == nid:
+                    first_an = an
+                    break
+            for an in annots[annots.index(first_an)+1:]:
+                if an["id #uuid"] == nid:
+                    if an != first_an and json.dumps(an) != json.dumps(first_an):
+                        print(
+                            "Annotations with the same UUID are actually "
+                            f"different: \n{an}\n{first_an}"
+                            "\nPlease open an issue on github"
+                            )
+
+        if nonunique_uuid_do == "exit":
+            raise Exception("Some annotations uuid were not unique! "
+                            "The uuid is derived from the text content or "
+                            "the image location.")
+        elif nonunique_uuid_do == "remove":
+            print("Removing annotations with non duplicate UUID")
+            new_ids = []
+            new_annots = []
+            for an in annots:
+                anid = an["id #uuid"]
+                if anid in new_ids:
+                    continue
+                new_annots.append(an)
+                new_ids.append(anid)
+            assert len(new_annots) < len(annots)
+            assert len(new_annots) == len(new_ids)
+            annots = new_annots
+            ids = new_ids
+        elif nonunique_uuid_do == "keep":
+            print("Keeping annotations with non duplicate UUID")
+        else:
+            raise ValueError(nonunique_ids)
 
     annots = {
             "highlights": annots,
@@ -325,14 +374,20 @@ def main(
         imgdir_path.mkdir(exist_ok=True)
         imgdir_path = str(imgdir_path)
 
+    filename = str(Path(input_path).name)
+
     # create the md file alongside the annotations
     md = "file-path:: ../assets/" + Path(input_path).name + "\n"
     md += "diy_type:: [[Annotations_page]]\n\n"
-    for an in annots["highlights"]:
+    for ia, an in enumerate(annots["highlights"]):
         # if not "content" in an:
         #     print(f"No content in annotation: '{an}'")
         #     continue
-        lines =  an["content"]["text"].split("\n")
+        text =  an["content"]["text"]
+        if not text.strip():
+            # text = f"Notext {ia + 1}"
+            text = f"{filename} (empty annotation {ia + 1})"
+        lines =  text.split("\n")
         md += "- " + lines.pop(0) + "\n"
         md += "  ls-type:: annotation\n"
         md += "  hl-page:: " + str(an["page"]) + "\n"
@@ -342,7 +397,7 @@ def main(
             md += "  hl-type:: area\n"
             tstamp = an["content"]["image_id"].split("_")[-1]
             md += "  hl-stamp:: " + tstamp + "\n"
-            # TODO: get the tiemstamp of the creation of the annot
+            # TODO: get the timestamp of the creation of the annot
             shutil.move(
                     "images_cache/" + an["content"]["image_id"] + ".png",
                     imgdir_path + "/" + an["content"]["image_id"] + ".png"
@@ -368,7 +423,7 @@ def main(
             with open(md_path, "w") as f:
                 f.write(md)
         else:
-            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + str(Path(input_path).name).replace(".pdf", ".md")))
+            md_path = str(Path(input_path).parent.parent / "pages" / ("hls__" + filename).replace(".pdf", ".md")))
             print(f"Inferred md_path: {md_path}")
             with open(md_path, "w") as f:
                 f.write(md)
@@ -378,7 +433,7 @@ def main(
             with open(edn_path, "w") as f:
                 f.write(edn)
         else:
-            edn_path = str(Path(input_path).parent / Path(input_path).name.replace(".pdf", ".edn"))
+            edn_path = str(Path(input_path).parent / filename.replace(".pdf", ".edn"))
             print(f"Inferred edn_path: {edn_path}")
             with open(edn_path, "w") as f:
                 f.write(edn)
