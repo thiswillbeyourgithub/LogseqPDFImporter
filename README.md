@@ -1,5 +1,5 @@
 # LogseqPDFImporter
-Import PDF into [logseq](https://github.com/logseq/logseq/) but also import annotations made from other softwares.
+Import PDF into [logseq](https://github.com/logseq/logseq/) but also import annotations made from other software.
 
 ## Status
 * *Not feature complete but I've used it successfuly several times*
