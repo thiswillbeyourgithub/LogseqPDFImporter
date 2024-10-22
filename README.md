@@ -8,6 +8,11 @@ Import PDF into [logseq](https://github.com/logseq/logseq/) but also import anno
 * Colors are correctly matched to logseq's available colors.
 * Creates both the .md and .edn files, as well as images of area highlights.
 
+### PDF reader compatibility
+- I use [Okular](https://okular.kde.org/) from KDE software on my computers and [Xodo](https://xodo.com/) on android. Both use annotations that are fully compatible by the way!
+- I assume it works out of the box with other readers minus some quirks. Notably related to freehand movement I'm sure.
+- **Tell me if you tested it on other software!**
+
 ### TODO (please help)
 * fix the text annotation by using small rectangles that cover exactly the text instead of one large overlapping area over the whole text
 
