@@ -14,6 +14,7 @@ Import PDF into [logseq](https://github.com/logseq/logseq/) but also import anno
 - **Tell me if you tested it on other software!**
 
 ### TODO (please help)
+* Put it on pypi and detail in the README how to use it as a uv tool
 * fix the text annotation by using small rectangles that cover exactly the text instead of one large overlapping area over the whole text
 
 ## Usage
