@@ -287,7 +287,11 @@ def main(
                     words,
                     keep_newlines,
                     text_boundary_threshold)
-            annotdict["contents"] = text
+            comment_text = annot.info["content"]
+            if comment_text:
+                annotdict["contents"] = comment_text
+            else:
+                annotdict["contents"] = text
             annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect
             annotdict["quadpoints"] = []
