@@ -294,19 +294,22 @@ nonunique_uuid_do: str, default 'auto'
             print(not content)
             if content and handle_comments == 'replace':
                 text = content
-            elif content and handle_comments == 'auto':
+            elif handle_comments == 'auto':
                 text = _extract_annot(
                     annot,
                     words,
                     keep_newlines,
                     text_boundary_threshold)
-                text = text + '\n' + content
+                if content:
+                	text = text + '\n' + content 
+            elif handle_comments == 'ignore':
+                text = _extract_annot(
+                    annot,
+                    words,
+                    keep_newlines,
+                    text_boundary_threshold)
             else:
-                text = _extract_annot(
-                    annot,
-                    words,
-                    keep_newlines,
-                    text_boundary_threshold)
+                raise ValueError(content)
             annotdict["contents"] = text
             annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect
