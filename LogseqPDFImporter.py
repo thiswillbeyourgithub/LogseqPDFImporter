@@ -11,6 +11,8 @@ import colour
 
 import fitz
 
+from typing import Literal
+
 
 COLORS = {
         'yellow': (1.0, 0.78431372549, 0.196078431373),
@@ -231,7 +233,7 @@ def main(
     keep_newlines: bool = True,
     text_boundary_threshold: float = 0.9,
     nonunique_uuid_do: str = "exit",
-    handle_comments: str = "auto",
+    handle_comments: Literal["auto", "replace", "ignore"] = "auto",
     ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
@@ -259,7 +261,7 @@ def main(
         Leave to 'exit' to crash if there are non unique UUIDs.
         Note: The UUID for each block is a hash derived from its content so
         there really should be no reason to have duplicate UUIDs AFAIK.
-nonunique_uuid_do: str, default 'auto'
+    handle_comments: Literal, default 'auto'
         Set to 'auto' to add annotations from older apps to annotations from more recent apps.
         Set to 'replace' to automatically keep only annotations from older devices.
         Set to 'ignore' to not even check for other type of annotations.
@@ -291,7 +293,6 @@ nonunique_uuid_do: str, default 'auto'
             words = page.get_text("words")
             content = None
             content = annot.info.get("content", "").strip()
-            print(not content)
             if content and handle_comments == 'replace':
                 text = content
             elif handle_comments == 'auto':
@@ -301,7 +302,7 @@ nonunique_uuid_do: str, default 'auto'
                     keep_newlines,
                     text_boundary_threshold)
                 if content:
-                	text = text + '\n' + content 
+                	text = text.strip() + '\n' + content 
             elif handle_comments == 'ignore':
                 text = _extract_annot(
                     annot,
