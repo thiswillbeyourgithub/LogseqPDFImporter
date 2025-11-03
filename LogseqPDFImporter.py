@@ -301,8 +301,8 @@ def main(
                     words,
                     keep_newlines,
                     text_boundary_threshold)
-                if content:
-                	text = text.strip() + '\n' + content 
+                if not text:
+                	text = content
             elif handle_comments == 'ignore':
                 text = _extract_annot(
                     annot,
@@ -310,7 +310,11 @@ def main(
                     keep_newlines,
                     text_boundary_threshold)
             else:
-                raise ValueError(content)
+                try:
+                    raise ValueError(content)
+                except ValueError as err:
+                    print(err)
+                    continue
             annotdict["contents"] = text
             annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect
