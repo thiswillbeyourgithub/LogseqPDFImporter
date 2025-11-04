@@ -1,10 +1,7 @@
-import time
 import shutil
 import textwrap
-import hashlib
 import simplejson as json  # only simplejson can dump decimal
 from pathlib import Path
-import sys
 import uuid
 import fire
 import colour
