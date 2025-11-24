@@ -309,11 +309,8 @@ def main(
                     keep_newlines,
                     text_boundary_threshold)
             else:
-                try:
-                    raise ValueError(content)
-                except ValueError as err:
-                    print(err)
-                    continue
+                print(f"Error: unexpected handle_comments value. Content: {content}")
+                continue
             annotdict["contents"] = text
             annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect
