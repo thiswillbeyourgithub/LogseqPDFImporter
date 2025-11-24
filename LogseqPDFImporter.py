@@ -291,7 +291,6 @@ def main(
 
             # extract text using PyMuPDF
             words = page.get_text("words")
-            content = None
             content = annot.info.get("content", "").strip()
             if content and handle_comments == 'replace':
                 text = content
