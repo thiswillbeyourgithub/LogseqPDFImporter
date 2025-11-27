@@ -8,6 +8,8 @@ import colour
 
 import fitz
 
+from typing import Literal
+
 
 COLORS = {
         'yellow': (1.0, 0.78431372549, 0.196078431373),
@@ -228,6 +230,7 @@ def main(
     keep_newlines: bool = True,
     text_boundary_threshold: float = 0.9,
     nonunique_uuid_do: str = "exit",
+    handle_comments: Literal["auto", "replace", "ignore"] = "auto",
     ):
     """
     source: https://stackoverflow.com/questions/1106098/parse-annotations-from-a-pdf#12502560
@@ -255,12 +258,18 @@ def main(
         Leave to 'exit' to crash if there are non unique UUIDs.
         Note: The UUID for each block is a hash derived from its content so
         there really should be no reason to have duplicate UUIDs AFAIK.
+    handle_comments: Literal, default 'auto'
+        Set to 'auto' to add annotations from older apps to annotations from more recent apps.
+        Set to 'replace' to automatically keep only annotations from older devices.
+        Set to 'ignore' to not even check for other type of annotations.
     """
     assert nonunique_uuid_do in ["exit", "remove", "keep"], f"nonunique_uuid_do value is {nonunique_uuid_do}"
 
     readerfitz = fitz.open(input_path)  # separate reader that handles annotation text better
 
     file_name = Path(input_path).name
+
+    assert handle_comments in ["auto", "replace", "ignore"], f"handle_comments value is {handle_comments}"
 
     Path("images_cache").mkdir(exist_ok=True)
 
@@ -279,11 +288,26 @@ def main(
 
             # extract text using PyMuPDF
             words = page.get_text("words")
-            text = _extract_annot(
+            content = annot.info.get("content", "").strip()
+            if content and handle_comments == 'replace':
+                text = content
+            elif handle_comments == 'auto':
+                text = _extract_annot(
                     annot,
                     words,
                     keep_newlines,
                     text_boundary_threshold)
+                if not text:
+                	text = content
+            elif handle_comments == 'ignore':
+                text = _extract_annot(
+                    annot,
+                    words,
+                    keep_newlines,
+                    text_boundary_threshold)
+            else:
+                print(f"Error: unexpected handle_comments value. Content: {content}")
+                continue
             annotdict["contents"] = text
             annotdict["color"] = annot.colors["fill"] if annot.colors["fill"] else annot.colors['stroke']
             annotdict["rect"] = annot.rect

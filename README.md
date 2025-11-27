@@ -20,6 +20,9 @@ Import PDF into [logseq](https://github.com/logseq/logseq/) but also import anno
 ## Usage
 * `python -m pip install -r requirements.txt`
 * `python LogseqPDFImporter.py path_to_pdf --md_path path_to_md --edn_path path_to_edn`
+* `handle_comments` option (auto/replace/ignore) help with extracting annotations made with older apps (works for Adobe Acrobat Reader (v16.09.21) or PDF Reader under iOS 8 for example).
+`python LogseqPDFImporter.py path_to_pdf --md_path path_to_md --edn_path path_to_edn --handle_comments ignore`
+
 
 ## Example
 ### 1
